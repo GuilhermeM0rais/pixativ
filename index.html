@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Transferência PIX</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      max-width: 300px;
+      margin-bottom: 20px;
+    }
+
+    input, button {
+      margin-bottom: 10px;
+      padding: 8px;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    #resultado {
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Transferência PIX</h1>
+
+  <form id="abrirContaForm">
+    <label for="cpf">CPF:</label>
+    <input type="text" id="cpf" placeholder="Digite o CPF">
+
+    <label for="nome">Nome:</label>
+    <input type="text" id="nome" placeholder="Digite o nome">
+
+    <label for="saldo">Saldo:</label>
+    <input type="number" id="saldo" placeholder="Digite o saldo">
+
+    <button type="button" onclick="abrirConta()">Abrir Conta</button>
+  </form>
+
+  <form id="transferenciaForm">
+    <label for="origem">Conta de origem (CPF):</label>
+    <input type="text" id="origem" placeholder="Digite o CPF">
+
+    <label for="destino">Conta de destino (CPF):</label>
+    <input type="text" id="destino" placeholder="Digite o CPF">
+
+    <label for="valor">Valor:</label>
+    <input type="number" id="valor" placeholder="Digite o valor">
+
+    <button type="button" onclick="transferir()">Transferir</button>
+  </form>
+
+  <div id="resultado"></div>
+
+  <script>
+  
+    const contas = [];
+
+    
+    function abrirConta() {
+      const cpf = document.getElementById('cpf').value;
+      const nome = document.getElementById('nome').value;
+      const saldo = parseFloat(document.getElementById('saldo').value);
+
+      
+      if (contas.some(conta => conta.cpf === cpf)) {
+        alert('CPF já cadastrado. Utilize outro CPF.');
+        return;
+      }
+
+      const novaConta = { cpf, nome, saldo };
+
+    
+      contas.push(novaConta);
+
+      
+      document.getElementById('cpf').value = '';
+      document.getElementById('nome').value = '';
+      document.getElementById('saldo').value = '';
+
+      alert('Conta aberta com sucesso!');
+    }
+
+  
+    function transferir() {
+      const origem = document.getElementById('origem').value;
+      const destino = document.getElementById('destino').value;
+      const valor = parseFloat(document.getElementById('valor').value);
+
+    
+      const contaOrigem = contas.find(conta => conta.cpf === origem);
+      const contaDestino = contas.find(conta => conta.cpf === destino);
+
+      if (!contaOrigem || !contaDestino) {
+        alert('Conta de origem ou destino não encontrada.');
+        return;
+      }
+
+     
+      if (contaOrigem.saldo < valor) {
+        alert('Saldo insuficiente na conta de origem.');
+        return;
+      }
+
+     
+      contaOrigem.saldo -= valor;
+      contaDestino.saldo += valor;
+
+      document.getElementById('origem').value = '';
+      document.getElementById('destino').value = '';
+      document.getElementById('valor').value = '';
+
+ 
+      document.getElementById('resultado').innerText = `Transferência de R$ ${valor.toFixed(2)} realizada com sucesso!`;
+    }
+  </script>
+
+</body>
+</html>
